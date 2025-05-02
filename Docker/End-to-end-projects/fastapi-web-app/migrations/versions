@@ -1,0 +1,5 @@
+The `versions` directory under `migrations` is typically where Alembic stores migration scripts. Since this is a new project and no migrations have been created yet, the contents of this directory will be empty. 
+
+Here is the content for the `versions` directory:
+
+# This directory is intentionally left blank.
