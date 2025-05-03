@@ -102,10 +102,10 @@ services:
     networks:
       - app-network
 
-  networks:
-    app-network:
+networks:
+  app-network:
     driver: bridge
 
-  volumes:
-    sqldata:
-    redisdata:
+volumes:
+  sqldata:
+  redisdata:
