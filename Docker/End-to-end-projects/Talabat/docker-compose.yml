@@ -5,14 +5,26 @@ services:
     build:
       context: ./TalabatProject
       dockerfile: Dockerfile
+    ports:
+      - "5000:80"  # Assuming your API runs on port 80 internally
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Server=db;Database=TalabatProjectDB;User Id=sa;Password=0101Fa0101!;TrustServerCertificate=True
-      - ConnectionStrings__IdentityConnection=Server=db;Database=TalabatIdentityDB;User Id=sa;Password=0101Fa0101!;TrustServerCertificate=True
-      - ConnectionStrings__Redis=redis:6379
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=db;Database=TalabatProjectDB;User Id=sa;Password=0101Fa0101!;TrustServerCertificate=True;MultipleActiveResultSets=true;ConnectRetryCount=5;ConnectRetryInterval=10
+      - ConnectionStrings__IdentityConnection=Server=db;Database=TalabatIdentityDB;User Id=sa;Password=0101Fa0101!;TrustServerCertificate=True;MultipleActiveResultSets=true;ConnectRetryCount=5;ConnectRetryInterval=10
+      - ConnectionStrings__Redis=redis:6379,password=0101Fa0101!,connectTimeout=5000,syncTimeout=5000,abortConnect=false
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    restart: unless-stopped
 
   client:
     build:
@@ -43,33 +55,56 @@ services:
       timeout: 10s
       retries: 3
 
-  db:
+db:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    user: root 
+    user: root
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=0101Fa0101!
+      - MSSQL_PID=Developer
+      - MSSQL_TCP_PORT=1433
     ports:
       - "1433:1433"
     volumes:
       - sqldata:/var/opt/mssql
     healthcheck:
       test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "0101Fa0101!" -Q "SELECT 1" || exit 1
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    restart: unless-stopped
+    networks:
+      - app-network
 
-  redis:
+redis:
     image: redis:7.0.11
+    command: redis-server --appendonly yes --requirepass 0101Fa0101!
     ports:
       - "6379:6379"
     volumes:
       - redisdata:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      test: ["CMD", "redis-cli", "-a", "0101Fa0101!", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   sqldata:
