@@ -55,7 +55,7 @@ services:
       timeout: 10s
       retries: 3
 
-db:
+  db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     user: root
     environment:
@@ -81,7 +81,7 @@ db:
     networks:
       - app-network
 
-redis:
+  redis:
     image: redis:7.0.11
     command: redis-server --appendonly yes --requirepass 0101Fa0101!
     ports:
@@ -102,10 +102,10 @@ redis:
     networks:
       - app-network
 
-networks:
-  app-network:
+  networks:
+    app-network:
     driver: bridge
 
-volumes:
-  sqldata:
-  redisdata:
+  volumes:
+    sqldata:
+    redisdata:
