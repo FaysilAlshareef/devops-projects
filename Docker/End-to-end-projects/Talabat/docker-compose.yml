@@ -63,20 +63,23 @@ services:
       - SA_PASSWORD=0101Fa0101!
       - MSSQL_PID=Developer
       - MSSQL_TCP_PORT=1433
+      - MSSQL_MEMORY_LIMIT_MB=1024
     ports:
       - "1433:1433"
     volumes:
       - sqldata:/var/opt/mssql
     healthcheck:
       test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "0101Fa0101!" -Q "SELECT 1" || exit 1
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     deploy:
       resources:
         limits:
-          memory: 2G
+          memory: 1536M
+        reservations:
+          memory: 1024M
     restart: unless-stopped
     networks:
       - app-network
