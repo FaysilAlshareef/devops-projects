@@ -1,4 +1,4 @@
-FROM python:3.14.0b1-alpine3.21 AS builder
+FROM python:3.11-alpine AS builder
 
 WORKDIR /app
 
@@ -19,7 +19,7 @@ RUN pip install --no-cache-dir -U pip setuptools>=70.0.0
 COPY ./app ./app
 
 # Stage 2: Create the production image
-FROM python:3.14.0b1-alpine3.21
+FROM python:3.11-alpine
 
 WORKDIR /app
 
