@@ -79,6 +79,19 @@ The application will be available at `http://127.0.0.1:8000`.
 - `GET /db_health`: Checks the connection to the PostgreSQL database.
 - `GET /redis_health`: Checks the connection to Redis.
 
+## Project Architecture
+
+The application follows a microservices architecture with the following components:
+
+![Project Architecture](./ProjectArchitecture.svg)
+
+- **Nginx**: Acts as a reverse proxy, handling incoming HTTP requests and load balancing
+- **FastAPI**: Main application server that processes API requests
+- **PostgreSQL**: Primary database for persistent data storage
+- **Redis**: In-memory cache for improved performance
+
+Each component runs in its own Docker container, ensuring isolation and scalability. The containers communicate with each other through Docker's internal network.
+
 ## Docker Setup
 
 ### Dockerfile
