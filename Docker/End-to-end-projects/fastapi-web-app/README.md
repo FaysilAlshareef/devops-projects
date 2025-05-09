@@ -118,6 +118,25 @@ To ensure the security of your application, you can perform security scans on yo
    Run the following command to scan your Docker image:
    ```bash
    trivy image <image_name>
+   ```
+
+3. **Sample Scan Results**:
+   Below is a sample security scan result for our FastAPI web application image:
+   ```
+   Report Summary
+   
+   Total Vulnerabilities: 1 (UNKNOWN: 0, LOW: 0, MEDIUM: 0, HIGH: 1, CRITICAL: 0)
+   
+   Details:
+   ┌───────────────────────┬───────────────┬──────────┬────────┬───────────────┬───────────────┐
+   │        Library        │ Vulnerability │ Severity │ Status │    Version    │     Fixed     │
+   ├───────────────────────┼───────────────┼──────────┼────────┼───────────────┼───────────────┤
+   │ setuptools (METADATA) │ CVE-2024-6345 │   HIGH   │ fixed  │    65.5.1    │    70.0.0     │
+   └───────────────────────┴───────────────┴──────────┴────────┴───────────────┴───────────────┘
+   ```
+
+   The scan identified one HIGH severity vulnerability in the setuptools package, which can be fixed by upgrading to version 70.0.0 or later.
+
 
 
 
